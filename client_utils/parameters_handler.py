@@ -1,6 +1,7 @@
 import json
 import pandas as pd
 import numpy as np
+import os
 from client_utils.features_extraction import features_extraction_pipeline
 from client_utils.features_engineering import FeaturesEngineeringPipeline
 from client_utils.extract_features_importance import FeatureImportanceExtraction
@@ -68,6 +69,7 @@ class ParametersHandler:
             columns_to_select = self.selected_features + ['Target', 'Timestamp']
             selected_features_df = self.train_data[columns_to_select].copy()
             print(selected_features_df)
+            selected_features_df.to_csv("selected features.csv", index=False)
             self.meta_features_after = FEX_pipeline(selected_features_df)
             self.file_controller.save_file(self.meta_features_before, "MetaFeatuerBefore")
             self.file_controller.save_file(self.meta_features_after, "MetaFeatuerAfter")
@@ -122,24 +124,49 @@ class ParametersHandler:
         Recursively convert non-serializable types to serializable types.
         """
         if isinstance(obj, dict):
-            return {k: self._convert_to_serializable(v) for k, v in obj.items()}
+            return {self._convert_to_serializable(k): self._convert_to_serializable(v) for k, v in obj.items()}
         elif isinstance(obj, list):
             return [self._convert_to_serializable(i) for i in obj]
-        elif isinstance(obj, pd.Series):
-            return obj.to_list()
-        elif isinstance(obj, pd.DataFrame):
-            return obj.to_dict(orient='records')
-        elif isinstance(obj, np.int32):  # Add other types here if needed
+        elif isinstance(obj, tuple):
+            return tuple(self._convert_to_serializable(i) for i in obj)
+        elif isinstance(obj, set):
+            return {self._convert_to_serializable(i) for i in obj}
+        elif isinstance(obj, np.int32) or isinstance(obj, np.int64):
             return int(obj)
-        elif isinstance(obj, np.float32):
+        elif isinstance(obj, np.float32) or isinstance(obj, np.float64):
             return float(obj)
         elif isinstance(obj, np.bool_):
             return bool(obj)
-        elif isinstance(obj, np.int64):
-            return int(obj)
+        elif isinstance(obj, np.ndarray):
+            return self._convert_to_serializable(obj.tolist())
         else:
             return obj
 
 
 
+    # def metafeatuers_to_csv(self, results):
+    #     # Load existing metadata
+    #     with open(r"././Data/metadata.json", 'r') as file:
+    #         data_dict = json.load(file)
 
+    #     print(data_dict)
+        
+    #     # Update with new results
+    #     data_dict.update(results)
+
+    #     # Save updated metadata
+    #     # self.file_controller = FileController()
+    #     # self.file_controller.save_file(data_dict, "FinalMetaFeatures", "json")
+
+    #     # Flatten the "meta featuers" key for CSV output
+    #     meta_features = data_dict.pop("meta featuers", {})
+    #     data_dict.update(meta_features)
+
+    #     # Create a DataFrame from the updated data
+    #     new_data_df = pd.DataFrame([data_dict])
+
+    #     # Path to the CSV file
+    #     file_path = 'selected features.csv'
+
+    #     # Save the combined data to the CSV file
+    #     combined_df.to_csv(file_path, index=False)

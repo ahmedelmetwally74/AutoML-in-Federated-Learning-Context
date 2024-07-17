@@ -27,7 +27,7 @@ class SplitData:
                 break
 
         # Check the Timestamp name
-        timestamp_keywords = ['timestamp', 'Timestamp', 'Date', 'date']
+        timestamp_keywords = ['timestamp', 'Timestamp']
         for col in self.data.columns:
             if any(keyword in col for keyword in timestamp_keywords):
                 self.data.rename(columns={col: 'Timestamp'}, inplace=True)

@@ -104,10 +104,10 @@ class MetaFeatureExtractionAggregator(Aggregator):
             out_parameters[feature]['Min No. Of Seasonality Components in Target'] = self._aggregate_min(feature_parameters.get('No. Of Seasonality Components in Target', []))
             out_parameters[feature]['Stddev No. Of Seasonality Components in Target'] = self._aggregate_std(feature_parameters.get('No. Of Seasonality Components in Target', []))
             # Fractal Dimension Analysis of Target
-            out_parameters[feature]['Average Fractal Dimensionality Across Clients of Target'] = self._aggregate_average(feature_parameters.get('Fractal Dimensionality Across Clients of Target', []))
+            out_parameters[feature]['Average Fractal Dimensionality Across Clients of Target'] = self._aggregate_average(feature_parameters.get('Fractal Dimension Analysis of Target', []))
             # Period of Seasonality Components in Target
-            out_parameters[feature]['Maximum Period of Seasonality Components in Target Across Clients'] = self._aggregate_max(feature_parameters.get('Maximum Period of Seasonality Components in Target Across Clients', []))
-            out_parameters[feature]['Minimum Period of Seasonality Components in Target Across Clients'] = self._aggregate_min(feature_parameters.get('Minimum Period of Seasonality Components in Target Across Clients', []))
+            out_parameters[feature]['Maximum Period of Seasonality Components in Target Across Clients'] = self._aggregate_max(feature_parameters.get('Maximum Period of Seasonality Components in Target', []))
+            out_parameters[feature]['Minimum Period of Seasonality Components in Target Across Clients'] = self._aggregate_min(feature_parameters.get('Minimum Period of Seasonality Components in Target', []))
             # Target Stationarity Entropy
             out_parameters[feature]['Entropy of Target Stationarity'] = self._aggregate_entropy(feature_parameters.get('Target Stationarity', []))
         
@@ -115,39 +115,49 @@ class MetaFeatureExtractionAggregator(Aggregator):
         self.metafeatuers_to_csv(out_parameters)
         return {"aggregated features": out_parameters}
     
+
+    
     # Sum
     def _aggregate_sum(self , values): 
-        return sum(values) if values else 0
+        
+        return sum(values) # if (values)  else 9999 to check
     # max
     def _aggregate_max(self, values):
-        return max(values) if values else 0
+        return max(values) # if (values)  else 9999 to check
     # min
     def _aggregate_min(self, values):
-        return min(values) if values else 0
+        return min(values) # if (values)  else 9999 to check
     # mean 
     def _aggregate_mean(self , values): 
-        return mean(values) if values else 0
+        return mean(values) # if (values)  else 9999 to check
     # mode 
     def _aggregate_mode(self, values): 
         try:
-            return mode(values) if values else 0
+            return mode(values) # if (values)  else 9999 to check
         except StatisticsError:
             return "No unique mode"
     # std 
     def _aggregate_std(self , values): 
-        return np.std(values) if values else 0
+             if (values):
+                 return np.std(values)
+             elif (np.isnan(values)):
+                 return 0 
+             else:
+                 # the standard devision measure the spread of the data so if all identical >> no variability >> return zero 
+                 return 0
+           
     # len
     def _aggregate_len(self , values): 
-        return len(values) if values else 0
+        return len(values) # if (values)  else 9999 to check
     # average 
     def _aggregate_average(self , values):
-        return sum(values) / len(values) if values else 0
+        return (sum(values) / len(values)) # if (values)  else 9999 to check
     # entropy
     def _aggregate_entropy(self, values):
         if not values:
             return 0
         value_counts = [values.count(v) for v in set(values)]
-        return entropy(value_counts, base=None)
+        return entropy(value_counts, base=None) # if (values)  else 9999 to check
     # def metafeatuers_to_csv(self,results):
 
     #     with open(r"././Data/metadata.json", 'r') as file:

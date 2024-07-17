@@ -246,7 +246,8 @@ class CustomStrategy(Strategy):
                 agg_parameters = aggregator.aggregate(agg_features, agg_size)
                 print("agg_parameters",agg_parameters)
                 agg_parameters['server_round'] = server_round + 1
-                agg_features = json.dumps(agg_parameters).encode("utf-8")
+
+                agg_features = json.dumps(self._convert_to_serializable(agg_parameters)).encode("utf-8")
                 agg_parameters = fl.common.Parameters(tensors=[agg_features], tensor_type="features_weights")
 
         # if server_round == self.max_round:
@@ -284,3 +285,25 @@ class CustomStrategy(Strategy):
             self.best_loss=loss_aggregated
             self.best_round = server_round
         return loss_aggregated, metrics_aggregated
+    def _convert_to_serializable(self, obj):
+        """
+        Recursively convert non-serializable types to serializable types.
+        """
+        if isinstance(obj, dict):
+            return {self._convert_to_serializable(k): self._convert_to_serializable(v) for k, v in obj.items()}
+        elif isinstance(obj, list):
+            return [self._convert_to_serializable(i) for i in obj]
+        elif isinstance(obj, tuple):
+            return tuple(self._convert_to_serializable(i) for i in obj)
+        elif isinstance(obj, set):
+            return {self._convert_to_serializable(i) for i in obj}
+        elif isinstance(obj, np.int32) or isinstance(obj, np.int64):
+            return int(obj)
+        elif isinstance(obj, np.float32) or isinstance(obj, np.float64):
+            return float(obj)
+        elif isinstance(obj, np.bool_):
+            return bool(obj)
+        elif isinstance(obj, np.ndarray):
+            return self._convert_to_serializable(obj.tolist())
+        else:
+            return obj

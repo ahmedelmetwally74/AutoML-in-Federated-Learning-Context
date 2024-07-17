@@ -23,7 +23,9 @@ class MetaFeatures:
         return len(self.df)
 
     def get_num_missing_vals(self):
-        return self.df.isnull().sum().sum()
+        value=self.df.isnull().sum().sum()
+
+        return value if (value) else 0
 
     def get_target_missing_vals(self):
         return self.df['Target'].isnull().sum() if 'Target' in self.df.columns else 0
@@ -37,15 +39,13 @@ def meta_feature_extraction(df):
     num_features = mf.get_num_features()
     missing_vals = mf.get_num_missing_vals()
     target_missing_vals = mf.get_target_missing_vals()
-
+   
     results = {
         "No. Of Instances": num_instances,
-        "Dataset Missing Values %": (missing_vals / (num_instances * num_features)) * 100,
+        "Dataset Missing Values %":  ((missing_vals / (num_instances * num_features)) * 100 if num_features > 0 else 0) ,
         "Target Missing Values %": (target_missing_vals / num_instances) * 100
     }
     return {"meta featuers":results}
 
-# if __name__ == "__main__":
-#     data_path = sys.argv[1]
-#     output_path = sys.argv[2]
-#     meta_feature_extraction(data_path, output_path)
+# data = pd.read_csv(r'D:\OneDrive\Desktop\fedrated_ver3 - Copy\datasets\522.csv')
+# meta=meta_feature_extraction(data)

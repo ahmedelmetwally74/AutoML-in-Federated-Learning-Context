@@ -203,8 +203,10 @@ class TrendExtractor(BaseEstimator, TransformerMixin):
             return "flat"
 
         # Perform the Augmented Dickey-Fuller test
+        print("##########adfuller",series_df)
         adf_result = adfuller(series_df.y)
         p_value = adf_result[1]
+        print(p_value)
 
         # Determine the trend type based on the p-value
         if p_value < 0.05:
@@ -212,11 +214,16 @@ class TrendExtractor(BaseEstimator, TransformerMixin):
         else:
             return "logistic"
 
+
+
+
+
     def transform(self, X):
         # Assuming X is a DataFrame with 'timestamp' and 'value' columns
 
         newX = X.copy()
         newX.rename(columns={'Timestamp': 'ds', self.feature: 'y'}, inplace=True)
+        print(newX)
         self.trend_type = self.get_trend_type(newX.set_index('ds'))
         if self.trend_type == "logistic":
             # With a logistic growth trend, we need to provide information about the capacity (maximum limit)

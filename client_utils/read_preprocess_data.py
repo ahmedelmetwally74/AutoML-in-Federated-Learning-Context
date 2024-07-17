@@ -34,6 +34,7 @@ class ReadPreprocessData:
         self.numerical_columns = self.columns_types['numerical']
         self.encode_categorical(fit=True)
         self.fill_missing()
+        self.drop_rows_with_nans()
         self.drop_columns_with_nans()
         return self.data, self.columns_types, self.dataset_type
 
@@ -42,6 +43,7 @@ class ReadPreprocessData:
         self.data = self.data.sort_values(by='Timestamp')
         self.encode_categorical(fit=False)
         self.fill_missing()
+        self.drop_rows_with_nans()
         self.drop_columns_with_nans()
         return self.data
 
@@ -68,10 +70,36 @@ class ReadPreprocessData:
     #                 self.data= self.data.iloc[1:]  
     #        self.data[col] = self.data[col].interpolate(method='linear')
         
+    # def fill_missing(self):
+    # # Check if the first row has any missing values and drop it until it doesn't
+    #     while self.data.iloc[0].isnull().any():
+    #         self.data = self.data.iloc[1:].reset_index(drop=True)
+
+    #     # Forward fill for categorical columns
+    #     for col in self.categorical_columns:
+    #         self.data[col] = self.data[col].ffill()
+
+    #     # Linear interpolation for numerical columns and target column
+    #     for col in self.numerical_columns + [self.columns_types["target"]]:
+    #         self.data[col] = self.data[col].interpolate(method='linear')
+
+    #     # Check if there are still missing values at the beginning after interpolation
+    #     while self.data.iloc[0].isnull().any():
+    #         self.data = self.data.iloc[1:].reset_index(drop=True)
     def fill_missing(self):
-    # Check if the first row has any missing values and drop it until it doesn't
-        while self.data.iloc[0].isnull().any():
+    # Check if the DataFrame is empty
+        if self.data.empty:
+            print("DataFrame is empty.")
+            return
+
+        # Drop rows with missing values at the beginning until the first row has no missing values
+        while not self.data.empty and self.data.iloc[0].isnull().any():
             self.data = self.data.iloc[1:].reset_index(drop=True)
+
+        # If the DataFrame is empty after dropping rows, return
+        if self.data.empty:
+            print("DataFrame became empty after dropping rows with missing values.")
+            return
 
         # Forward fill for categorical columns
         for col in self.categorical_columns:
@@ -81,9 +109,14 @@ class ReadPreprocessData:
         for col in self.numerical_columns + [self.columns_types["target"]]:
             self.data[col] = self.data[col].interpolate(method='linear')
 
-        # Check if there are still missing values at the beginning after interpolation
-        while self.data.iloc[0].isnull().any():
+        # Drop rows with missing values at the beginning again after interpolation
+        while not self.data.empty and self.data.iloc[0].isnull().any():
             self.data = self.data.iloc[1:].reset_index(drop=True)
+        
+        # If the DataFrame is empty after the second drop, print a message
+        if self.data.empty:
+            print("DataFrame became empty after the second drop of rows with missing values.")
+
 
     # def fill_missing(self):
     #     if self.dataset_type == "univariate":
@@ -118,16 +151,36 @@ class ReadPreprocessData:
             self.dataset_type = "multivariate"
         else:
             self.dataset_type = "univariate"
-    def drop_columns_with_nans(self):
-         threshold=0.7
-         self.data.replace([np.inf, -np.inf], np.nan, inplace=True)
-         nan_proportion = self.data.isna().mean()
-         columns_to_drop = nan_proportion[nan_proportion > threshold].index
-         self.data.drop(columns=columns_to_drop) 
+    def drop_rows_with_nans(self):
+    
+        # Replace infinite values with NaN
+        self.data.replace([np.inf, -np.inf], np.nan, inplace=True)
+        
+        nan_threshold = 5  # Example threshold: Rows with 5 or more NaN values will be included
+
+        # Filter rows with more than 'nan_threshold' NaN values
+        rows_to_drop = self.data[self.data.isna().sum(axis=1) >= nan_threshold].index
+
+        
+        # Drop rows with excessive NaN values
+        self.data.drop(index=rows_to_drop, inplace=True)
+
+    def drop_columns_with_nans(self, threshold=0.7):
+        # Replace infinite values with NaN
+        self.data.replace([np.inf, -np.inf], np.nan, inplace=True)
+        
+        # Calculate proportion of NaN values in each column
+        nan_proportion = self.data.isna().mean()
+        
+        # Filter columns where the proportion of NaN values exceeds the threshold
+        columns_to_drop = nan_proportion[nan_proportion > threshold].index
+        
+        # Drop columns with excessive NaN values
+        self.data.drop(columns=columns_to_drop, inplace=True)    
+        
 
 
-
-# data = pd.read_csv(r'D:\OneDrive\Desktop\fedrated_ver3 - Copy\Data\9_split_3.csv')
+# data = pd.read_csv(r'D:\OneDrive\Desktop\fedrated_ver3 - Copy\Data\1004_split_1.csv')
 # def check_data_health(data):
 #         has_inf = data.isin([np.inf, -np.inf]).any().any()
 #         has_nan = data.isna().any().any()
@@ -150,9 +203,11 @@ class ReadPreprocessData:
 # check_columns_name(data)
 
 # processed_data, columns_types, dataset_type = preprocessor.fit_transform(data)
+# rows_with_nan = processed_data[processed_data.isna().any(axis=1)]
+# print("rows with nan",rows_with_nan)
 # # processed_data["Target"] = processed_data["Target"].interpolate(method='linear')
 # print(check_data_health(processed_data))
 # print("Processed Data:")
-# print(processed_data.head())
+# print(processed_data)
 # print("Columns Types:", columns_types)
 # print("Dataset Type:", dataset_type)

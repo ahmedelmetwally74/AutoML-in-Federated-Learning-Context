@@ -112,21 +112,21 @@ class FileController:
         Recursively convert non-serializable types to serializable types.
         """
         if isinstance(obj, dict):
-            return {k: self._convert_to_serializable(v) for k, v in obj.items()}
+            return {self._convert_to_serializable(k): self._convert_to_serializable(v) for k, v in obj.items()}
         elif isinstance(obj, list):
             return [self._convert_to_serializable(i) for i in obj]
-        elif isinstance(obj, pd.Series):
-            return obj.to_list()
-        elif isinstance(obj, pd.DataFrame):
-            return obj.to_dict(orient='records')
-        elif isinstance(obj, np.int32):  # Add other types here if needed
+        elif isinstance(obj, tuple):
+            return tuple(self._convert_to_serializable(i) for i in obj)
+        elif isinstance(obj, set):
+            return {self._convert_to_serializable(i) for i in obj}
+        elif isinstance(obj, np.int32) or isinstance(obj, np.int64):
             return int(obj)
-        elif isinstance(obj, np.float32):
+        elif isinstance(obj, np.float32) or isinstance(obj, np.float64):
             return float(obj)
         elif isinstance(obj, np.bool_):
             return bool(obj)
-        elif isinstance(obj, np.int64):
-            return int(obj)
+        elif isinstance(obj, np.ndarray):
+            return self._convert_to_serializable(obj.tolist())
         else:
             return obj
 
