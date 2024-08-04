@@ -11,7 +11,7 @@ pip install -r requirements.txt
 
 This will install all the necessary packages specified in the `requirements.txt` file.
 
-## Run the project 
+## Run our part to get the final csv output file after Meta Features Extraction and the Aggregation   
  
 run "automate_process.py" 
 
