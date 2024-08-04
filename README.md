@@ -23,14 +23,12 @@ The goal is to develop an AutoML framework tailored for federated environments, 
 ## Getting Started
 
 ### Installation
-Install the required dependencies by running the following:
-pip install -r requirements.txt
-
+Install the required dependencies by running the following: `pip install -r requirements.txt`
 This will install all the necessary packages specified in the `requirements.txt` file.
 
 ### Running the Process
 Generate the final CSV output after meta-feature extraction and aggregation: 
-run "automate_process.py" 
+run `automate_process.py`
 
 ## Modules Description
 
@@ -43,7 +41,7 @@ The `aggStrategy` module implements a custom strategy for aggregating features r
 ## Additional Resources
 
 - [Project Experiments Repository](<https://github.com/ahmedelmetwally74/AutoML-For-Time-Series-in-Federated-Learning-Context>)
-- [Project Presentation](<insert-link-here>)
+- [Project Presentation](<https://drive.google.com/file/d/1RVLQXojonXrsdbAdjmGe2wxv6GkqMFrM/view?usp=sharing>)
 
 ## Acknowledgements
 This project was developed with mentorship provided by [Giza Systems](http://www.gizasystems.com), whose guidance was invaluable in the practical application of federated learning principles and AutoML strategies.
