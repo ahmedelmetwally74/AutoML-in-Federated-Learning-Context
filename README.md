@@ -1,4 +1,5 @@
-# Federated Learning Project
+# AutoML for Time Series Data in Federated Learning Context
+## Federated Learning Project
 
 This project implements a federated learning system where a server coordinates training among multiple clients. Each client contributes its local model updates to the server, which aggregates them to produce a global model.
 
