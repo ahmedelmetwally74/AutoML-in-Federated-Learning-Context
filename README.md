@@ -24,7 +24,6 @@ The goal is to develop an AutoML framework tailored for federated environments, 
 
 ### Installation
 Install the required dependencies by running the following:
-
 pip install -r requirements.txt
 
 This will install all the necessary packages specified in the `requirements.txt` file.
@@ -32,7 +31,6 @@ This will install all the necessary packages specified in the `requirements.txt`
 ### Running the Process
 Generate the final CSV output after meta-feature extraction and aggregation: 
 run "automate_process.py" 
-
 
 ## Modules Description
 
