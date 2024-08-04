@@ -42,7 +42,7 @@ The `aggStrategy` module implements a custom strategy for aggregating features r
 
 ## Additional Resources
 
-- [Project Experiments Repository](<[insert-link-here](https://github.com/ahmedelmetwally74/AutoML-For-Time-Series-in-Federated-Learning-Context)>)
+- [Project Experiments Repository](<https://github.com/ahmedelmetwally74/AutoML-For-Time-Series-in-Federated-Learning-Context>)
 - [Project Presentation](<insert-link-here>)
 
 ## Acknowledgements
