@@ -20,6 +20,10 @@ The goal is to develop an AutoML framework tailored for federated environments, 
 - **Hyperparameter Tuning**: Conduct hyperparameter optimization locally on client devices to adapt to data variations.
 - **Aggregation**: Combine optimized hyperparameters from all clients to enhance the global model's performance.
 
+## Project workflow
+
+![Video Demonstration](https://github.com/ahmedelmetwally74/AutoML-in-Federated-Learning-Context/blob/main/AutoML%20gif.gif)
+
 ## Getting Started
 
 ### Installation
